@@ -1,0 +1,103 @@
+<!--
+Copyright 2026 The Zerowriter Company Ltd.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+Note the UART baud rate must match the Zerowriter baud rate. In v1.12+ of Zerowriter, the baud rate is temporarily set to 115200, as it seems to be the most stable for USB / CH340 or for web serial from my testing.
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zerowriter UART Transfer</title>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    #output { width: 100%; height: 300px; }
+    button { margin: 5px; }
+    ul { margin: 20px 0; }
+  </style>
+</head>
+<body>
+  <h1>Zerowriter UART Transfer</h1>
+  <h2>Instructions:</h2>
+  <ul>
+    <li>Connect your Zerowriter via USB cable.</li>
+    <li>Click the "Connect Zerowriter Ink" button to establish the connection.</li>
+    <li>Select your USB connection. Bluetooth is not supported.</li>
+    <li>When you press "Send" on your Zerowriter Ink, your current file will transfer here as text.</li>
+    <li>You can then copy the text to your clipboard using the "Copy to Clipboard" button.</li>
+  </ul>
+
+  <textarea id="output" readonly></textarea><br>
+  <button id="connectButton">Connect Zerowriter Ink</button>
+  <button id="copyButton" disabled>Copy to Clipboard</button>
+  <button id="clearButton">Clear</button>
+
+  <script>
+    const connectButton = document.getElementById('connectButton');
+    const copyButton = document.getElementById('copyButton');
+    const clearButton = document.getElementById('clearButton');
+    const outputTextarea = document.getElementById('output');
+    let port;
+    let reader;
+
+    async function connectUART() {
+      try {
+        port = await navigator.serial.requestPort();
+        await port.open({ baudRate: 115200 });
+
+        connectButton.textContent = "Connected to UART";
+        copyButton.disabled = false;  
+        const decoder = new TextDecoder("windows-1252");
+        const inputStream = port.readable.pipeTo(decoder.writable);
+
+        reader = decoder.readable.getReader();
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) {
+            reader.releaseLock();
+            break;
+          }
+          outputTextarea.value += value;
+        }
+      } catch (error) {
+        console.log("Error connecting to Zerowriter:", error);
+        outputTextarea.value += `Failed to connect: ${error.message}\n`;
+      }
+    }
+
+    function toggleConnection() {
+      if (!port) {
+        connectUART();
+      }
+    }
+
+    clearButton.addEventListener('click', () => {
+      outputTextarea.value = '';
+    });
+
+    copyButton.addEventListener('click', () => {
+      outputTextarea.select();
+      document.execCommand('copy');
+      alert("Text copied to clipboard!");
+    });
+
+    connectButton.addEventListener('click', toggleConnection);
+  </script>
+</body>
+</html>

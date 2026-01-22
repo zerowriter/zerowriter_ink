@@ -1,0 +1,622 @@
+<!--
+Copyright 2026 The Zerowriter Company Ltd.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zerowriter Ink – keymap.json editor</title>
+  <style>
+    :root { --gap: 10px; --radius: 12px; --border: 1px solid #ddd; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; background: #fafafa; color:#111; }
+    header { padding: 16px 18px; background:#fff; border-bottom: var(--border); position: sticky; top: 0; z-index: 10; }
+    h1 { margin: 0 0 6px 0; font-size: 18px; }
+    .sub { font-size: 13px; color:#444; }
+
+    main { padding: 16px 18px; display: grid; gap: var(--gap); grid-template-columns: 1fr; align-items: start; }
+
+    .card { background:#fff; border: var(--border); border-radius: var(--radius); box-shadow: 0 1px 0 rgba(0,0,0,0.03); }
+    .card > .hd { padding: 12px 14px; border-bottom: var(--border); display:flex; gap:10px; align-items:center; justify-content: space-between; flex-wrap: wrap; }
+    .card > .bd { padding: 12px 14px; }
+
+    .row { display:flex; gap:10px; flex-wrap: wrap; align-items:center; }
+    .row > * { flex: 0 0 auto; }
+
+    select, input, textarea, button {
+      font: inherit; font-size: 14px;
+      border: var(--border); border-radius: 10px;
+      padding: 8px 10px; background:#fff;
+    }
+    textarea { width: 100%; min-height: 230px; resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    button { cursor: pointer; }
+    button.primary { background:#111; color:#fff; border-color:#111; }
+    button.danger { background:#fff; color:#b00020; border-color:#f0c2c7; }
+    button.ghost { background:#fff; }
+    .muted { color:#666; font-size: 12px; }
+
+    .gridWrap { overflow:auto; }
+    .kbdGrid { display:grid; gap:8px; padding: 8px; }
+    .key {
+      border: var(--border);
+      border-radius: 12px;
+      padding: 10px 10px;
+      min-height: 48px;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      user-select:none;
+      text-align:center;
+    }
+    .key:hover { outline: 2px solid #eee; }
+    .key.sel { outline: 3px solid #111; }
+    .key.blank { opacity: 0.7; }
+    .key.disabled { background:#f1f1f1; color:#8a8a8a; border-color:#e3e3e3; cursor:not-allowed; }
+    .key.disabled:hover { outline: none; }
+    .key.space { min-height: 52px; }
+    .key .val { font-size: 13px; font-weight: 650; letter-spacing: 0.2px; }
+
+    .pill { font-size:12px; padding:3px 8px; border-radius: 999px; border: var(--border); background:#fff; color:#333; }
+    .hint { font-size: 12px; color:#555; line-height: 1.35; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    .small { font-size: 12px; }
+    .hr { height:1px; background:#eee; margin: 10px 0; }
+
+    .testline { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: 12px; color:#444; }
+    .test-ok { color: #146c2e; }
+    .test-bad { color: #b00020; }
+
+    .controls { display:grid; gap: 10px; grid-template-columns: 1fr; }
+    .controls .row { justify-content: flex-start; }
+    .controls .meta { display:flex; gap: 10px; align-items:center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Zerowriter Ink keymap.json editor</h1>
+  <div class="sub">Edits: Normal / Shift / Alt / Shift+Alt.</div>
+</header>
+
+<main>
+  <section class="card">
+    <div class="hd">
+      <div class="row">
+        <span class="pill" id="layoutPill">Layout</span>
+        <label class="row">
+          <span class="muted">Layer</span>
+          <select id="layerSel"></select>
+        </label>
+      </div>
+      <div class="row">
+        <button class="danger" id="btnReset">Reset</button>
+      </div>
+    </div>
+
+    <div class="bd">
+      <div class="hint">
+        <div><b>Outputs are strings.</b></div>
+        <div>Empty output is <span class="mono">""</span>. Spacebar is the explicit single-space <span class="mono">" "</span>.</div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="gridWrap">
+        <div class="kbdGrid" id="kbdGrid"></div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="controls">
+        <div class="meta">
+          <span class="pill">Selected</span>
+          <span class="muted" id="selKeyMeta">No key selected</span>
+        </div>
+
+        <div class="row">
+          <label class="row" style="flex: 1 1 auto;">
+            <span class="muted">Output</span>
+            <input id="keyOut" placeholder="e.g., a or \t" style="min-width: 160px; max-width: 320px; flex: 0 1 220px;" />
+          </label>
+          <button class="ghost" id="btnApply">Apply</button>
+          <button class="ghost" id="btnClearKey">Clear</button>
+        </div>
+
+        <div class="row">
+          <button class="ghost" id="btnSetTab">Insert Tab</button>
+          <button class="ghost" id="btnSetEnter">Insert Return</button>
+          <button class="ghost" id="btnSetBksp">Insert Backspace</button>
+          <button class="ghost" id="btnSetSpace">Insert Space</button>
+        </div>
+
+        <div class="row" style="justify-content: space-between;">
+          <div class="row">
+            <span class="pill">Import / Export</span>
+            <span class="muted small">Paste JSON, then Import.</span>
+          </div>
+          <div class="row">
+            <button class="ghost" id="btnImport">Import JSON</button>
+            <button class="ghost" id="btnCopy">Copy JSON</button>
+            <button class="primary" id="btnDownload">Download keymap.json</button>
+          </div>
+        </div>
+
+        <textarea id="jsonBox" spellcheck="false"></textarea>
+        <div class="muted small" id="statusLine"></div>
+        <div class="testline" id="testOut"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+(() => {
+  "use strict";
+
+  // Full schema (must match Zerowriter keymap files)
+  const SCHEMA_KEYS = [
+    "keymapNormal",
+    "keymapShift",
+    "keymapAlt",
+    "keymapShiftAlt",
+    "keymapMeta",
+    "keymapShiftMeta",
+    "keymapCtrl",
+    "keymapShiftCtrl",
+  ];
+
+  const EDIT_LAYERS = [
+    { key: "keymapNormal",   label: "Normal" },
+    { key: "keymapShift",    label: "Shift" },
+    { key: "keymapAlt",      label: "Alt" },
+    { key: "keymapShiftAlt", label: "Shift+Alt" },
+  ];
+
+  // 61 keys grouped 14 / 14 / 13 / 12 / 8
+  const ROWS = [
+    ["`","1","2","3","4","5","6","7","8","9","0","-","=","Backspace"],
+    ["Tab","q","w","e","r","t","y","u","i","o","p","[","]","\\"],
+    ["Caps","a","s","d","f","g","h","j","k","l",";","'","Return"],
+    ["LShift","z","x","c","v","b","n","m",",",".","/","RShift"],
+    ["Unused","Unused","Unused","Space","←","↓","↑","→"],
+  ];
+
+  function buildKeys() {
+    let id = 0;
+    return ROWS.map(r => r.map(lbl => ({ id: id++, label: lbl })));
+  }
+
+  // DOM
+  const elLayerSel   = document.getElementById("layerSel");
+  const elGrid       = document.getElementById("kbdGrid");
+  const elLayoutPill = document.getElementById("layoutPill");
+
+  const elSelKeyMeta = document.getElementById("selKeyMeta");
+  const elKeyOut     = document.getElementById("keyOut");
+  const elJsonBox    = document.getElementById("jsonBox");
+  const elStatus     = document.getElementById("statusLine");
+  const elTestOut    = document.getElementById("testOut");
+
+  const btnReset     = document.getElementById("btnReset");
+  const btnClearKey  = document.getElementById("btnClearKey");
+  const btnApply     = document.getElementById("btnApply");
+  const btnSetTab    = document.getElementById("btnSetTab");
+  const btnSetEnter  = document.getElementById("btnSetEnter");
+  const btnSetBksp   = document.getElementById("btnSetBksp");
+  const btnSetSpace  = document.getElementById("btnSetSpace");
+  const btnDownload  = document.getElementById("btnDownload");
+  const btnCopy      = document.getElementById("btnCopy");
+  const btnImport    = document.getElementById("btnImport");
+
+  const state = {
+    rows: buildKeys(),
+    selectedLayerKey: EDIT_LAYERS[0].key,
+    selectedKeyId: null,
+    maps: {},
+  };
+
+  // - L/R shift (these are fixed in firmware)
+  // - bottom-left 3 (ctrl/alt/menu on the physical keyboard)
+  // - arrows (firmware handles arrows; we keep these blank in exported JSON)
+  const DISABLED = new Set([41, 52, 53, 54, 55, 57, 58, 59, 60]);
+
+  // 60% sizing model (quarter-unit grid)
+  const BASE_COLS = 60;
+  const SPAN_BY_ID = new Map([
+    [13, 8],  // Backspace 2.00u
+    [14, 6],  // Tab 1.50u
+    [27, 6],  // Backslash 1.50u
+    [28, 7],  // Caps 1.75u
+    [40, 9],  // Return 2.25u
+    [41, 9],  // LShift 2.25u
+    [52, 11], // RShift 2.75u
+
+    // Bottom row: 1.25u keys + space
+    [53, 5], [54, 5], [55, 5],
+    [56, 25],
+    [57, 5], [58, 5], [59, 5], [60, 5],
+  ]);
+
+  function spanForId(kid) { return SPAN_BY_ID.get(kid) ?? 4; }
+  function setStatus(msg) { elStatus.textContent = msg || ""; }
+
+  function keyCount() {
+    let count = 0;
+    for (const row of state.rows) count += row.length;
+    return count;
+  }
+
+  function layerLabel(layerKey) {
+    return (EDIT_LAYERS.find(l => l.key === layerKey)?.label) || layerKey;
+  }
+
+  function findKeyLabelById(kid) {
+    for (const row of state.rows) for (const k of row) if (k.id === kid) return k.label;
+    return "";
+  }
+
+  function ensureMapsSized() {
+    const n = keyCount();
+    for (const k of SCHEMA_KEYS) {
+      if (!state.maps[k]) state.maps[k] = [];
+      const arr = state.maps[k];
+      if (arr.length < n) {
+        for (let i = arr.length; i < n; i++) arr[i] = "";
+      } else if (arr.length > n) {
+        arr.length = n;
+      }
+    }
+
+    // Force firmware-handled slots to remain blank in export.
+    for (const k of SCHEMA_KEYS) {
+      const a = state.maps[k];
+      for (const id of DISABLED) {
+        if (id === 56) continue;
+        a[id] = "";
+      }
+    }
+  }
+
+  function selectedArr() { return state.maps[state.selectedLayerKey]; }
+
+  function displayValue(v) {
+    if (v === "") return '""';
+    if (v === "\t") return "Tab";
+    if (v === "\r") return "Return";
+    if (v === "\b") return "Backspace";
+    if (v === "\\") return "\\";
+    if (v === " ") return "Space";
+    if (v.length === 1) return v;
+    return v.slice(0, 3) + (v.length > 3 ? "…" : "");
+  }
+
+  function parseUserString(raw) {
+    raw = (raw ?? "");
+
+    if (raw === '""') return "";
+    if (raw === " ") return " ";
+
+    if (raw === "\\t") return "\t";
+    if (raw === "\\r") return "\r";
+    if (raw === "\\b") return "\b";
+    if (raw === "\\n") return "\n";
+    if (raw === "\\\\") return "\\";
+
+    if (/^\\u[0-9a-fA-F]{4}$/.test(raw)) {
+      try { return String.fromCharCode(parseInt(raw.slice(2), 16)); }
+      catch { return raw; }
+    }
+
+    if (raw.length >= 2 && raw.startsWith('"') && raw.endsWith('"')) {
+      try {
+        const v = JSON.parse(raw);
+        return (typeof v === "string") ? v : String(v ?? "");
+      } catch {
+        // ignore
+      }
+    }
+
+    return raw;
+  }
+
+  function toJSONObj() {
+    const obj = {};
+    for (const k of SCHEMA_KEYS) obj[k] = state.maps[k].slice();
+    return obj;
+  }
+
+  function refreshJSONBox() {
+    ensureMapsSized();
+    elJsonBox.value = JSON.stringify(toJSONObj(), null, 2);
+  }
+
+  function refreshEditorFields() {
+    const kid = state.selectedKeyId;
+    if (kid == null) {
+      elSelKeyMeta.textContent = "No key selected";
+      elKeyOut.value = "";
+      return;
+    }
+
+    const v = selectedArr()[kid] ?? "";
+    elSelKeyMeta.textContent = `Key #${kid} • ${layerLabel(state.selectedLayerKey)}`;
+
+    if (v === "\t") elKeyOut.value = "\\t";
+    else if (v === "\r") elKeyOut.value = "\\r";
+    else if (v === "\b") elKeyOut.value = "\\b";
+    else if (v === "\\") elKeyOut.value = "\\\\";
+    else if (v === "") elKeyOut.value = '""';
+    else elKeyOut.value = v;
+  }
+
+  function refreshGrid() {
+    const targetCols = BASE_COLS;
+    elGrid.style.gridTemplateColumns = `repeat(${targetCols}, minmax(18px, 1fr))`;
+    elGrid.innerHTML = "";
+
+    const arr = selectedArr();
+
+    for (const row of state.rows) {
+      let usedCols = 0;
+      for (const k of row) {
+        const d = document.createElement("div");
+        const rawVal = arr[k.id] ?? "";
+
+        const isDisabled = DISABLED.has(k.id);
+        const isBlankSlot = (k.label === "Unused");
+
+        d.className = "key" +
+          (k.id === state.selectedKeyId ? " sel" : "") +
+          (isBlankSlot ? " blank" : "") +
+          (isDisabled ? " disabled" : "");
+
+        const span = spanForId(k.id);
+        d.style.gridColumn = `span ${span}`;
+        if (k.id === 56) d.classList.add("space");
+        usedCols += span;
+
+        const val = document.createElement("div");
+        val.className = "val";
+        val.textContent = displayValue(rawVal);
+        d.appendChild(val);
+
+        if (!isDisabled) {
+          d.addEventListener("click", () => {
+            state.selectedKeyId = k.id;
+            refreshGrid();
+            refreshEditorFields();
+            setStatus("");
+          });
+        }
+
+        elGrid.appendChild(d);
+      }
+
+      for (let i = usedCols; i < targetCols; i++) {
+        const sp = document.createElement("div");
+        sp.style.visibility = "hidden";
+        elGrid.appendChild(sp);
+      }
+    }
+  }
+
+  function applyOutputToSelected(raw) {
+    const kid = state.selectedKeyId;
+    if (kid == null) return;
+    if (DISABLED.has(kid)) return;
+
+    const val = parseUserString(raw);
+
+    selectedArr()[kid] = val;
+
+    refreshGrid();
+    refreshJSONBox();
+    refreshEditorFields();
+  }
+
+  async function copyToClipboard(text) {
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+    elJsonBox.focus();
+    elJsonBox.select();
+    const ok = document.execCommand && document.execCommand("copy");
+    if (!ok) throw new Error("Clipboard not available");
+  }
+
+  // --- Defaults ---
+  function loadDefaultQwerty() {
+    const n = keyCount();
+
+    const normal = [
+      "`","1","2","3","4","5","6","7","8","9","0","-","=","\b",
+      "\t","q","w","e","r","t","y","u","i","o","p","[","]","\\",
+      "","a","s","d","f","g","h","j","k","l",";","'","\r",
+      "","z","x","c","v","b","n","m",",",".","/","",
+      "","",""," ","","","","",
+    ];
+
+    const shift = [
+      "~","!","@","#","$","%","^","&","*","(",")","_","+","\b",
+      "\t","Q","W","E","R","T","Y","U","I","O","P","{","}","|",
+      "","A","S","D","F","G","H","J","K","L",":","\"","\r",
+      "","Z","X","C","V","B","N","M","<",">","?","",
+      "","",""," ","","","","",
+    ];
+
+    function sized(a) {
+      const out = a.slice();
+      while (out.length < n) out.push("");
+      out.length = n;
+      return out;
+    }
+
+    state.maps = {
+      keymapNormal: sized(normal),
+      keymapShift: sized(shift),
+      keymapAlt: new Array(n).fill(""),
+      keymapShiftAlt: new Array(n).fill(""),
+      keymapMeta: new Array(n).fill(""),
+      keymapShiftMeta: new Array(n).fill(""),
+      keymapCtrl: new Array(n).fill(""),
+      keymapShiftCtrl: new Array(n).fill(""),
+    };
+
+    ensureMapsSized();
+  }
+
+  function init() {
+    elLayerSel.innerHTML = "";
+    for (const layer of EDIT_LAYERS) {
+      const opt = document.createElement("option");
+      opt.value = layer.key;
+      opt.textContent = layer.label;
+      elLayerSel.appendChild(opt);
+    }
+    elLayerSel.value = state.selectedLayerKey;
+
+    loadDefaultQwerty();
+    elLayoutPill.textContent = `Layout: 60%`;
+
+    refreshGrid();
+    refreshJSONBox();
+    refreshEditorFields();
+    runTests();
+    setStatus("Ready.");
+  }
+
+  // Events
+  elLayerSel.addEventListener("change", () => {
+    state.selectedLayerKey = elLayerSel.value;
+    refreshGrid();
+    refreshEditorFields();
+    refreshJSONBox();
+    setStatus(`Switched to layer: ${layerLabel(state.selectedLayerKey)}.`);
+  });
+
+  elKeyOut.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      applyOutputToSelected(elKeyOut.value);
+      setStatus("Applied.");
+    }
+  });
+
+  btnApply.addEventListener("click", () => {
+    applyOutputToSelected(elKeyOut.value);
+    setStatus("Applied.");
+  });
+
+  btnClearKey.addEventListener("click", () => {
+    applyOutputToSelected('""');
+    setStatus('Cleared to "".');
+  });
+
+  btnSetTab.addEventListener("click", () => { applyOutputToSelected("\\t"); setStatus("Inserted Tab"); });
+  btnSetEnter.addEventListener("click", () => { applyOutputToSelected("\\r"); setStatus("Inserted Return"); });
+  btnSetBksp.addEventListener("click", () => { applyOutputToSelected("\\b"); setStatus("Inserted Backspace"); });
+  btnSetSpace.addEventListener("click", () => { applyOutputToSelected(" "); setStatus("Inserted Space"); });
+
+  btnImport.addEventListener("click", () => {
+    let obj;
+    try { obj = JSON.parse(elJsonBox.value); }
+    catch { setStatus("Import failed: JSON is not valid."); return; }
+
+    for (const k of SCHEMA_KEYS) {
+      if (Array.isArray(obj[k])) {
+        state.maps[k] = obj[k].map(v => (typeof v === "string" ? v : String(v ?? "")));
+      }
+    }
+
+    ensureMapsSized();
+    state.selectedKeyId = null;
+    refreshGrid();
+    refreshEditorFields();
+    refreshJSONBox();
+    runTests();
+    setStatus("Imported JSON into editor.");
+  });
+
+  btnCopy.addEventListener("click", async () => {
+    try {
+      await copyToClipboard(elJsonBox.value);
+      setStatus("Copied JSON to clipboard.");
+    } catch {
+      setStatus("Clipboard blocked here. JSON is selected—press Ctrl/Cmd+C to copy.");
+      try { elJsonBox.focus(); elJsonBox.select(); } catch { /* ignore */ }
+    }
+  });
+
+  btnDownload.addEventListener("click", () => {
+    const text = elJsonBox.value;
+    const a = document.createElement("a");
+    a.download = "keymap.json";
+    a.rel = "noopener";
+
+    try {
+      const blob = new Blob([text], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      a.href = url;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        try { URL.revokeObjectURL(url); } catch { /* ignore */ }
+        try { a.remove(); } catch { /* ignore */ }
+      }, 250);
+      setStatus("Downloaded keymap.json.");
+      return;
+    } catch { }
+
+    try {
+      a.href = "data:application/json;charset=utf-8," + encodeURIComponent(text);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setStatus("Downloaded keymap.json (data URI fallback).");
+    } catch {
+      try { elJsonBox.focus(); elJsonBox.select(); } catch { }
+      setStatus("Download blocked here. JSON is selected—press Ctrl/Cmd+C and save as keymap.json.");
+    }
+  });
+
+  btnReset.addEventListener("click", () => {
+    state.selectedKeyId = null;
+    state.selectedLayerKey = EDIT_LAYERS[0].key;
+    elLayerSel.value = state.selectedLayerKey;
+
+    loadDefaultQwerty();
+    refreshGrid();
+    refreshEditorFields();
+    refreshJSONBox();
+    runTests();
+    setStatus("Reset to default QWERTY.");
+  });
+
+  // Tests
+  function assert(name, cond) { return { name, ok: !!cond }; }
+
+  function runTests() {
+
+  }
+
+  // Boot
+  init();
+})();
+</script>
+</body>
+</html>
