@@ -1,7 +1,7 @@
 To install a firmware bin from SD card:
 
-rename the file to "firmware.bin"
-place on SD card
+find the "firmware.bin" you want
+place on SD card in root directory
 insert SD card to Zerowriter Ink
 Turn on (or reboot) Zerowriter Ink
 Automatically will install
