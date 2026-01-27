@@ -1,0 +1,5 @@
+Download this folder and open it in terminal.
+
+[ replace /dev/cu.usbserial-10 with your usb UART port via ls /dev/tty.* ]
+
+esptool.py --chip esp32 -p /dev/cu.usbserial-10 write_flash 0x0000 zw_123.merged.bin  
