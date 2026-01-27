@@ -1,5 +1,7 @@
 The commandline files includes rebuilding the partition structure, so they are generally better if the SD card updater isn't working. This means you will lose your saved settings in the menu.
 
+Same as the web updater, to do this kind of command line update you will need to unplug your Zerowriter keyboard by opening it up.
+
 Download this folder and open it in terminal.
 
 [ replace /dev/cu.usbserial-10 with your usb UART port via ls /dev/tty.* ]
