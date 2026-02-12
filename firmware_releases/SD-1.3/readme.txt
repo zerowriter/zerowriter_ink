@@ -1,5 +1,14 @@
 CHANGELOG:
 
+1.3
+
+- can remap UP,DOWN,LEFT,RIGHT keys in keymap.json file (will update the web keymap editor later). they are the last 4 keys in the keymapnormal array.
+- Bookmarks Mode has been given a facelift, looks clean now
+- fixed umlauts not working in deadkeys
+- added escape character for markdown "\" meaning you can type an asterisks * by typing \* (for example)
+- cleaned up some markdown and fountain formatting
+- increased the time window for inputting passcode locks (will look at this furhter down the line, this is just a quick solution)
+
 1.28
 
 - fixed editor often adding " " extra spaces to sentences in existing files when opening them
