@@ -1,0 +1,364 @@
+(kicad_sch
+	(version 20231120)
+	(generator "eeschema")
+	(generator_version "8.0")
+	(uuid "e63e39d7-6ac0-4ffd-8aa3-1841a4541b55")
+	(paper "A4")
+	(title_block
+		(title "Zerowriter Inkplate 5 Gen2")
+		(date "2025-06-30")
+		(rev "V1.2.0.")
+		(company "SOLDERED ENGINEERING")
+		(comment 1 "BOARD-101-A")
+		(comment 2 "Mils")
+	)
+	(lib_symbols)
+	(text "Test Points"
+		(exclude_from_sim no)
+		(at 148.59 124.46 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "0a9de774-7f72-4e87-b4f6-6157388e155a")
+	)
+	(text "USB-C,Battery conection, USB to UART,\nVoltage Regulator, \nON/OFF circuit, \nPWR LED, Battery charger,\nReset circuitry"
+		(exclude_from_sim no)
+		(at 142.875 63.5 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "15cb05f1-e523-415c-aac4-95a688f2ee48")
+	)
+	(text "SD card switch, RTC &\nWakeUp Button"
+		(exclude_from_sim no)
+		(at 89.535 93.345 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "19c8f73c-c52a-4765-9516-9defc03adb31")
+	)
+	(text "Micro Controller \nand GPIO expander"
+		(exclude_from_sim no)
+		(at 89.535 128.27 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "5e63b868-252d-4750-aa33-b9a59444f4ac")
+	)
+	(text "TPS e-paper power supply\n+ pull down resistors\nand protection diodes"
+		(exclude_from_sim no)
+		(at 84.455 60.96 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "a0a28fa4-b96b-4a66-a268-94b1e9e96d9a")
+	)
+	(text "Connectors for \nkeyboard & breakout board"
+		(exclude_from_sim no)
+		(at 195.58 58.42 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "b96f3fe2-73f7-422a-8c2a-5ba85fc2ffe0")
+	)
+	(text "E-paper panel"
+		(exclude_from_sim no)
+		(at 151.765 92.71 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "efafb1f6-4bcb-4f2b-8b14-93b678d16b6d")
+	)
+	(sheet
+		(at 193.04 45.72)
+		(size 40.64 27.94)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "5aef0b14-6984-4f8c-8358-fcc8d7908653")
+		(property "Sheetname" "Board Connectors"
+			(at 193.04 45.0084 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Board Connectors.kicad_sch"
+			(at 193.04 74.2446 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "Zerowriter Inkplate 5 Gen2"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(page "8")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 139.7 45.72)
+		(size 41.91 27.94)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "69d6a600-8481-47e9-a8fb-347bae2d38c5")
+		(property "Sheetname" "CTRL & COMS"
+			(at 139.7 45.0084 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "CTRL & COMS.kicad_sch"
+			(at 139.7 74.2446 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "Zerowriter Inkplate 5 Gen2"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 77.47 114.3)
+		(size 43.18 25.4)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "7f1adf82-7c80-4ebb-88ac-e056e62fc363")
+		(property "Sheetname" "MCU"
+			(at 77.47 113.5884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "MCU.kicad_sch"
+			(at 77.47 140.2846 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "Zerowriter Inkplate 5 Gen2"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(page "6")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 139.7 80.01)
+		(size 41.91 27.94)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "c5bb8608-6be3-40a7-8097-0867d1dea5ee")
+		(property "Sheetname" "E-paper"
+			(at 139.7 79.2984 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "E-paper.kicad_sch"
+			(at 139.7 108.5346 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "Zerowriter Inkplate 5 Gen2"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 77.47 80.01)
+		(size 43.18 27.94)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "c9e520b8-4d22-4e49-b91c-58bb00e98bb0")
+		(property "Sheetname" "SD & RTC"
+			(at 77.47 79.2984 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "SD & RTC.kicad_sch"
+			(at 77.47 108.5346 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "Zerowriter Inkplate 5 Gen2"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 139.7 114.3)
+		(size 41.91 25.4)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "cfdb8465-34cf-4ca2-b40f-dcb9094a6c75")
+		(property "Sheetname" "Test Points"
+			(at 139.7 113.5884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "TestPoints.kicad_sch"
+			(at 139.7 140.2846 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "Zerowriter Inkplate 5 Gen2"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(page "7")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 77.216 45.72)
+		(size 43.434 27.94)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "e4e20505-1208-4100-a4aa-676f50844c06")
+		(property "Sheetname" "POWER"
+			(at 77.216 45.0084 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "POWER.kicad_sch"
+			(at 77.216 74.2446 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "Zerowriter Inkplate 5 Gen2"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+)
